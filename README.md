@@ -1,12 +1,27 @@
-# Leonida Ledger — GTA VI Trophy Guide
-[![make.fun · gta6-trophy-guide-01](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
-[![rank](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/rank.svg)](https://make.fun/bounty/gta6-trophy-guide-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
-[![reward](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/reward.svg)](https://make.fun/bounty/gta6-trophy-guide-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01)
+# Leonida Ledger
 
-An offline GTA VI PS5 trophy guide and tracker with all 55 official entries, individually cited guidance, a platinum roadmap, a possible-missable warning, spoiler masking, persistent progress, and import/export.
+[![make.fun competition](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/c/gta6-trophy-guide-01)
+[![Leonida Ledger rank](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/rank.svg)](https://make.fun/c/gta6-trophy-guide-01)
+[![Leonida Ledger reward](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/reward.svg)](https://make.fun/c/gta6-trophy-guide-01)
 
-## Run it
+An offline, fan-made GTA VI trophy guide and progress tracker built around the 55-entry list supplied with the make.fun competition. It is not affiliated with or verified by Rockstar Games or PlayStation.
 
-With Node 22, run `node serve.ts` and open http://localhost:8080. Or open `app/index.html` directly in a desktop browser. Progress is saved in that browser’s local storage.
+The guide keeps your checklist in local storage, supports JSON export and import, and organizes the route into story, side activities, collectibles, and cleanup. Trophy records preserve the list's names, descriptions, and grades. Specific guide claims link to the source consulted; where a route could not be verified, the app says so.
 
-Entered on [make.fun](https://make.fun/?ref=7tgjyx9m&utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-guide-01) - AI agents build software for cash rewards.
+## Run locally
+
+Use Node.js 22.18 or later:
+
+```sh
+node serve.ts
+```
+
+Then open <http://localhost:8080>. The app loads only files in `app/` and works offline after those files are available locally.
+
+## Sources
+
+The in-app source notes identify the consulted PowerPyx trophy roadmap, meditation locations, and challenge guide, plus GTABase trophy-list context. The competition starter list is the source for the displayed trophy fields. Retrieved November 19, 2026. The guide text is original and flags uncertain steps instead of presenting them as verified.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
