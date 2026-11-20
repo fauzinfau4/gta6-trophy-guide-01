@@ -3,32 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101315">
-  <title>Leonida Ledger — GTA VI trophy guide</title>
+  <meta name="theme-color" content="#101411">
+  <title>Leonida Ledger — GTA VI Trophy Guide</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-shell">
-    <header class="masthead">
-      <a class="brand" href="#guide" aria-label="Leonida Ledger home"><span class="brand-mark">LL</span><span>LEONIDA <b>LEDGER</b><small>FIELD NOTES FOR THE PLATINUM</small></span></a>
-      <div class="mast-meta"><span class="offline-dot"></span> OFFLINE GUIDE <span class="divider">/</span> FAN-MADE</div>
-    </header>
-    <main>
-      <section class="hero">
-        <div><p class="eyebrow">VICE CITY · LEONIDA · PLAYSTATION 5</p><h1>Every last<br><em>loose end.</em></h1><p class="hero-copy">A quiet, practical route through all 55 trophies. Your checklist stays on this device.</p></div>
-        <div class="progress-card"><div class="progress-kicker">PLATINUM PROGRESS <span id="percent">0%</span></div><div class="progress-track"><span id="progress-fill"></span></div><div class="progress-numbers"><strong id="earned-count">00</strong><span>of 55 trophies earned</span><b>VICE GOT A PRICE!</b></div></div>
-      </section>
-      <nav class="tabs" aria-label="Guide sections"><button class="tab active" data-view="guide">Guide & tracker</button><button class="tab" data-view="roadmap">Roadmap to platinum</button><button class="tab" data-view="about">About & sources</button></nav>
-      <section id="guide-view" class="view">
-        <div class="toolbar"><div class="filter-list" role="group" aria-label="Filter trophies"><button class="filter active" data-filter="all">All 55</button><button class="filter" data-filter="story">Story</button><button class="filter" data-filter="missable">Missable</button><button class="filter" data-filter="collectibles">Collectibles</button><button class="filter" data-filter="activities">Activities</button><button class="filter" data-filter="online">Online</button></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Find a trophy" aria-label="Search trophies"></label></div>
-        <div class="utility-row"><label class="spoiler-control"><input id="spoiler-toggle" type="checkbox" checked><span class="switch"></span><span>Spoiler-free names</span></label><div class="save-tools"><button id="export" class="quiet-button">Export save ↗</button><label class="quiet-button import-button">Import save ↙<input id="import" type="file" accept="application/json"></label></div></div>
-        <div class="workspace"><section class="trophy-panel"><div class="panel-heading"><div><span class="eyebrow">YOUR CHECKLIST</span><h2>Road to legend</h2></div><span id="shown-count" class="count-pill">55 / 55</span></div><div id="trophy-list" class="trophy-list"></div></section><aside id="detail" class="detail-panel"><div class="empty-detail"><span class="detail-glyph">✳</span><p class="eyebrow">THE LEDGER IS OPEN</p><h2>Choose your next move.</h2><p>Select a trophy to see its requirement, guide notes, and place in the route.</p><div class="detail-rule"></div><span class="subtle">55 TROPHIES · 1 PLATINUM · 0 ONLINE</span></div></aside></div>
-      </section>
-      <section id="roadmap-view" class="view hidden"><div class="section-intro"><span class="eyebrow">THE LONG WAY HOME</span><h2>Four passes.<br><em>One platinum.</em></h2><p>Earn what naturally unlocks, then sweep the state and close the remaining counts.</p></div><div id="phase-list" class="phase-list"></div></section>
-      <section id="about-view" class="view hidden"><div class="section-intro"><span class="eyebrow">A NOTE ON THE LEDGER</span><h2>Built from the list.<br><em>Written for the road.</em></h2><p>Leonida Ledger is a fan-made guide to the trophy list supplied with this competition. It is not affiliated with or verified by Rockstar Games or PlayStation.</p></div><div id="sources-list" class="sources-list"></div><p class="about-foot">Your progress is stored in this browser only. Export a JSON save to carry it elsewhere. This app makes no network requests.</p></section>
-    </main>
-    <footer><span>LEONIDA LEDGER <b>·</b> FIELD EDITION</span><span>MADE FOR THE LONG WAY ROUND</span></footer>
-  </div>
-  <script type="module" src="app.js"></script>
+  <header class="masthead">
+    <a class="brand" href="#top" aria-label="Leonida Ledger home"><span class="brand-mark">LL</span><span>LEONIDA <b>LEDGER</b></span></a>
+    <nav class="tabs" aria-label="Guide views"><button class="tab active" data-view="guide">Guide &amp; tracker</button><button class="tab" data-view="roadmap">Roadmap to platinum</button><button class="tab" data-view="about">About &amp; sources</button></nav>
+    <button id="spoiler-toggle" class="quiet-button" aria-pressed="false">◉ Spoiler-free</button>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div><p class="eyebrow">VICE CITY · LEONIDA · PS5</p><h1>Every trophy.<br><em>One clear route.</em></h1><p class="lede">A fan-made field guide for the competition-provided 55 trophy list. Track your run, keep the route close.</p></div>
+      <div class="hero-stat"><strong id="earned-count">0<span> / 55</span></strong><span>toward platinum</span><div class="progress-track"><i id="progress-fill"></i></div><small id="progress-label">0% complete</small></div>
+    </section>
+    <section id="view-guide" class="view">
+      <div class="section-head"><div><p class="eyebrow">YOUR CHECKLIST</p><h2>Keep your own score</h2></div><div class="tools"><button id="export-button" class="outline-button">Export</button><button id="import-button" class="outline-button">Import</button><input id="import-file" type="file" accept="application/json" hidden></div></div>
+      <div class="workspace"><section class="list-panel"><div class="filter-row" id="filters"><button class="filter active" data-filter="all">All 55</button><button class="filter" data-filter="story">Story</button><button class="filter" data-filter="missable">Missable</button><button class="filter" data-filter="collectibles">Collectibles</button><button class="filter" data-filter="activities">Activities</button><button class="filter" data-filter="online">Online</button></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search trophies, tasks, places…" autocomplete="off"><kbd>/</kbd></label><div id="trophy-list" class="trophy-list" aria-live="polite"></div></section>
+        <aside id="detail" class="detail-panel"><div class="empty-state"><span class="compass">✳</span><p class="eyebrow">FIELD NOTES</p><h3>Choose a trophy</h3><p>See its official description, a practical next step, missable status and source notes.</p></div></aside></div>
+    </section>
+    <section id="view-roadmap" class="view hidden"><div class="section-head"><div><p class="eyebrow">A FLEXIBLE ROUTE</p><h2>Roadmap to platinum</h2></div><p class="muted">The order is a planning aid. Completion details can change as play reveals more.</p></div><div id="roadmap-phases" class="roadmap-grid"></div></section>
+    <section id="view-about" class="view hidden"><div class="section-head"><div><p class="eyebrow">FIELD GUIDE</p><h2>About this ledger</h2></div></div><article class="about-card"><p>Leonida Ledger is an independent, offline fan guide. Trophy names, descriptions and grades reproduce the list supplied with this competition. This app is not verified by Rockstar Games or PlayStation.</p><h3>How to read the notes</h3><p>Named mission and count details come from the cited trophy guide sources. When a precise route is not corroborated, the note says so and sticks to what the trophy description itself establishes. Missable flags are conservative: confirm before passing a story point of no return.</p><h3>Sources consulted · retrieved 20 Nov 2026</h3><ol id="source-list" class="sources"></ol><p class="muted">Your checklist stays in this browser. Export a JSON backup before clearing site data.</p></article></section>
+  </main>
+  <footer><span>LEONIDA LEDGER</span><span>Offline by design · Progress saved on this device</span><span>55 TROPHIES · 1 PLATINUM</span></footer>
+  <script src="app.js" defer></script>
 </body>
 </html>

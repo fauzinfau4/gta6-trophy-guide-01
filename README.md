@@ -1,27 +1,22 @@
 # Leonida Ledger
 
-[![make.fun competition](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/c/gta6-trophy-guide-01)
-[![Leonida Ledger rank](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/rank.svg)](https://make.fun/c/gta6-trophy-guide-01)
-[![Leonida Ledger reward](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/reward.svg)](https://make.fun/c/gta6-trophy-guide-01)
+[![make.fun competition](https://make.fun/badge/gta6-trophy-guide-01.svg)](https://make.fun/competitions/gta6-trophy-guide-01)
+[![Leonida Ledger rank](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/rank.svg)](https://make.fun/competitions/gta6-trophy-guide-01)
+[![Leonida Ledger reward](https://make.fun/badge/gta6-trophy-guide-01/fauzinfau4/gta6-trophy-guide-01/reward.svg)](https://make.fun/competitions/gta6-trophy-guide-01)
 
-An offline, fan-made GTA VI trophy guide and progress tracker built around the 55-entry list supplied with the make.fun competition. It is not affiliated with or verified by Rockstar Games or PlayStation.
+An offline, fan-made checklist and field guide for all 55 PlayStation 5 trophies in the list supplied with the make.fun competition. Track earned trophies, search and filter the list, follow a flexible platinum roadmap, and back up progress as JSON.
 
-The guide keeps your checklist in local storage, supports JSON export and import, and organizes the route into story, side activities, collectibles, and cleanup. Trophy records preserve the list's names, descriptions, and grades. Specific guide claims link to the source consulted; where a route could not be verified, the app says so.
+The trophy list is reproduced as provided for the competition. This project is not verified by Rockstar Games or PlayStation. Trophy guides label uncertain details plainly and cite the guide pages consulted. The app itself loads only local files; source links open only when selected.
 
 ## Run locally
 
-Use Node.js 22.18 or later:
+Serve this repository's `app/` directory from any static web server, then open its `index.html`. Progress is stored in browser local storage. Use Export to save a backup and Import to restore one.
 
-```sh
-node serve.ts
-```
+## Guide references
 
-Then open <http://localhost:8080>. The app loads only files in `app/` and works offline after those files are available locally.
+- [PowerPyx trophy guide and roadmap](https://www.powerpyx.com/gta-6-grand-theft-auto-vi-trophy-guide-roadmap/)
+- [PowerPyx all challenges guide](https://www.powerpyx.com/gta-6-all-challenges-guide/)
+- [Push Square trophy guide and roadmap](https://www.pushsquare.com/guides/gta-6-trophy-guide-and-roadmap)
+- [PC Gamer achievements list](https://www.pcgamer.com/games/grand-theft-auto/gta-6-achievements-list/)
 
-## Sources
-
-The in-app source notes identify the consulted PowerPyx trophy roadmap, meditation locations, and challenge guide, plus GTABase trophy-list context. The competition starter list is the source for the displayed trophy fields. Retrieved November 19, 2026. The guide text is original and flags uncertain steps instead of presenting them as verified.
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+Sources retrieved 20 November 2026. Guide details may change as routes are confirmed.
