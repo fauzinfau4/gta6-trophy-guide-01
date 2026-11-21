@@ -3,30 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101411">
-  <title>Leonida Ledger — GTA VI Trophy Guide</title>
+  <meta name="theme-color" content="#101519">
+  <title>Leonida Ledger — GTA VI trophy guide</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="masthead">
-    <a class="brand" href="#top" aria-label="Leonida Ledger home"><span class="brand-mark">LL</span><span>LEONIDA <b>LEDGER</b></span></a>
-    <nav class="tabs" aria-label="Guide views"><button class="tab active" data-view="guide">Guide &amp; tracker</button><button class="tab" data-view="roadmap">Roadmap to platinum</button><button class="tab" data-view="about">About &amp; sources</button></nav>
-    <button id="spoiler-toggle" class="quiet-button" aria-pressed="false">◉ Spoiler-free</button>
-  </header>
-  <main id="top">
-    <section class="hero">
-      <div><p class="eyebrow">VICE CITY · LEONIDA · PS5</p><h1>Every trophy.<br><em>One clear route.</em></h1><p class="lede">A fan-made field guide for the competition-provided 55 trophy list. Track your run, keep the route close.</p></div>
-      <div class="hero-stat"><strong id="earned-count">0<span> / 55</span></strong><span>toward platinum</span><div class="progress-track"><i id="progress-fill"></i></div><small id="progress-label">0% complete</small></div>
-    </section>
-    <section id="view-guide" class="view">
-      <div class="section-head"><div><p class="eyebrow">YOUR CHECKLIST</p><h2>Keep your own score</h2></div><div class="tools"><button id="export-button" class="outline-button">Export</button><button id="import-button" class="outline-button">Import</button><input id="import-file" type="file" accept="application/json" hidden></div></div>
-      <div class="workspace"><section class="list-panel"><div class="filter-row" id="filters"><button class="filter active" data-filter="all">All 55</button><button class="filter" data-filter="story">Story</button><button class="filter" data-filter="missable">Missable</button><button class="filter" data-filter="collectibles">Collectibles</button><button class="filter" data-filter="activities">Activities</button><button class="filter" data-filter="online">Online</button></div><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search trophies, tasks, places…" autocomplete="off"><kbd>/</kbd></label><div id="trophy-list" class="trophy-list" aria-live="polite"></div></section>
-        <aside id="detail" class="detail-panel"><div class="empty-state"><span class="compass">✳</span><p class="eyebrow">FIELD NOTES</p><h3>Choose a trophy</h3><p>See its official description, a practical next step, missable status and source notes.</p></div></aside></div>
-    </section>
-    <section id="view-roadmap" class="view hidden"><div class="section-head"><div><p class="eyebrow">A FLEXIBLE ROUTE</p><h2>Roadmap to platinum</h2></div><p class="muted">The order is a planning aid. Completion details can change as play reveals more.</p></div><div id="roadmap-phases" class="roadmap-grid"></div></section>
-    <section id="view-about" class="view hidden"><div class="section-head"><div><p class="eyebrow">FIELD GUIDE</p><h2>About this ledger</h2></div></div><article class="about-card"><p>Leonida Ledger is an independent, offline fan guide. Trophy names, descriptions and grades reproduce the list supplied with this competition. This app is not verified by Rockstar Games or PlayStation.</p><h3>How to read the notes</h3><p>Named mission and count details come from the cited trophy guide sources. When a precise route is not corroborated, the note says so and sticks to what the trophy description itself establishes. Missable flags are conservative: confirm before passing a story point of no return.</p><h3>Sources consulted · retrieved 20 Nov 2026</h3><ol id="source-list" class="sources"></ol><p class="muted">Your checklist stays in this browser. Export a JSON backup before clearing site data.</p></article></section>
-  </main>
-  <footer><span>LEONIDA LEDGER</span><span>Offline by design · Progress saved on this device</span><span>55 TROPHIES · 1 PLATINUM</span></footer>
-  <script src="app.js" defer></script>
+  <div class="app-shell">
+    <header class="topbar"><a class="brand" href="#tracker"><span class="brand-mark">LL</span><span><b>LEONIDA LEDGER</b><small>FIELD GUIDE · PS5 TROPHIES</small></span></a><div class="top-actions"><span class="offline"><i></i> OFFLINE READY</span><button id="spoiler-toggle" class="quiet" type="button" aria-pressed="false">◉ <span>Spoilers hidden</span></button></div></header>
+    <main>
+      <section class="hero">
+        <div><p class="eyebrow">VICE CITY · LEONIDA · YOUR PLATINUM RUN</p><h1>The road to<br><em>Leonida Legend.</em></h1><p class="lede">A calm, saveable field ledger for all 55 trophies. The list is supplied with this competition; guidance is cited and uncertainty stays visible.</p><div class="hero-meta"><span>55 TROPHIES</span><span>1 PLAYTHROUGH</span><span>OFFLINE GUIDE</span></div></div>
+        <div class="progress-card"><div class="progress-head"><span>YOUR RUN</span><span id="earned-label">0 / 55</span></div><div class="progress-track"><span id="progress-fill"></span></div><div class="progress-foot"><strong id="percent">0%</strong><span>to platinum</span><span class="divider"></span><span id="remaining">55 to go</span></div><button id="next-up" class="next-up" type="button"><span class="next-icon">↗</span><span><small>GOOD NEXT STEP</small><b id="next-title">Start with the story</b></span><span class="arrow">→</span></button></div>
+      </section>
+      <nav class="tabs" aria-label="Main views"><button class="tab active" data-tab="tracker">01 <span>Guide & tracker</span></button><button class="tab" data-tab="roadmap">02 <span>Roadmap to platinum</span></button><button class="tab" data-tab="about">03 <span>About & sources</span></button><div class="tab-tools"><button id="export" class="outline" type="button">Export save ↗</button><label class="outline import-label">Import save <input id="import" type="file" accept="application/json"></label></div></nav>
+      <section id="tracker-view" class="view active">
+        <div class="section-head"><div><p class="eyebrow">THE LEDGER</p><h2>Every trophy, one place.</h2></div><span class="micro-note">Progress stays on this device</span></div>
+        <div class="filterbar"><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search trophies, steps…" autocomplete="off"></label><div id="filters" class="filters"><button class="filter active" data-filter="All">All <b>55</b></button><button class="filter" data-filter="Story">Story</button><button class="filter" data-filter="Missable">Missable</button><button class="filter" data-filter="Collectibles">Collectibles</button><button class="filter" data-filter="Activities">Activities</button><button class="filter" data-filter="Online">Online</button></div><label class="sort-label">SORT <select id="sort"><option value="list">List order</option><option value="grade">Grade</option><option value="phase">Roadmap phase</option></select></label></div>
+        <div class="workspace"><section class="trophy-panel"><div class="list-head"><span>CHECKLIST <b id="visible-count">55</b></span><span>SELECT A TROPHY FOR THE FIELD NOTES</span></div><div id="rows" class="rows"></div><div id="empty" class="empty" hidden>No trophies match. Try another search or filter.</div></section><aside id="detail" class="detail-panel"></aside></div>
+      </section>
+      <section id="roadmap-view" class="view"><div class="section-head"><div><p class="eyebrow">FOUR PHASES · ONE CLEAN RUN</p><h2>Leave the state in order.</h2></div><p class="micro-note">Based on the supplied list and cited guide research.</p></div><div id="phases" class="phases"></div><aside class="callout"><span>!</span><p><b>Protect your first save.</b> PowerPyx flags the Chapter 1 meditation at Jason’s house as potentially missable. Keep a rotating manual save and complete it when available; whether it is required remains unconfirmed.</p><button id="open-missable" type="button">View missable →</button></aside></section>
+      <section id="about-view" class="view"><div class="section-head"><div><p class="eyebrow">NOTES FROM THE FIELD</p><h2>What this guide knows.</h2></div></div><div class="about-grid"><article class="about-card"><p class="eyebrow">SCOPE</p><h3>Fan-made, offline, transparent.</h3><p>Leonida Ledger organizes the 55 trophy records supplied with this competition. It is an independent fan guide, not endorsed or verified by Rockstar Games or PlayStation. Guide details are credited below; unclear requirements are marked as unconfirmed rather than guessed.</p><p>Your checkmarks are stored locally in this browser. Export a JSON backup before changing devices.</p></article><article class="about-card"><p class="eyebrow">SOURCE INDEX</p><h3>References used for steps</h3><ol id="sources"></ol></article></div></section>
+      <footer><span>LEONIDA LEDGER <i>·</i> FAN-MADE FIELD GUIDE</span><span>Progress is yours. Keep a backup.</span></footer>
+    </main>
+  </div>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

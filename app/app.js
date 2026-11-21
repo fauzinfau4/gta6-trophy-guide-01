@@ -1,69 +1,87 @@
-(() => {
-  'use strict';
-  const SOURCES = [
-    { id: 'S1', name: 'PowerPyx — GTA 6 Trophy Guide & Roadmap', url: 'https://www.powerpyx.com/gta-6-grand-theft-auto-vi-trophy-guide-roadmap/' },
-    { id: 'S2', name: 'PowerPyx — All Challenges Guide', url: 'https://www.powerpyx.com/gta-6-all-challenges-guide/' },
-    { id: 'S3', name: 'Push Square — Trophy Guide and Roadmap', url: 'https://www.pushsquare.com/guides/gta-6-trophy-guide-and-roadmap' },
-    { id: 'S4', name: 'PC Gamer — GTA 6 achievements list and guide', url: 'https://www.pcgamer.com/games/grand-theft-auto/gta-6-achievements-list/' }
-  ];
-  const PHASES = ['Story', 'Side & activities', 'Collectibles', 'Cleanup'];
-  const STORAGE = 'leonida-ledger-progress-v1';
-  let trophies = [];
-  let earned = loadProgress();
-  let filter = 'all';
-  let selected = null;
-  let spoilerFree = false;
+const KEY = 'leonida-ledger-progress-v1';
+const data = await (await fetch('data/trophies.json')).json();
+const trophies = data.trophies;
+const sourceById = Object.fromEntries(data.sources.map((source) => [source.id, source]));
+const phases = ['Story', 'Side & activities', 'Collectibles', 'Cleanup'];
+let earned = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+let selected = 2;
+let filter = 'All';
+let query = '';
+let spoilers = false;
 
-  function loadProgress() { try { const value = JSON.parse(localStorage.getItem(STORAGE) || '{}'); return value && typeof value === 'object' ? value : {}; } catch { return {}; } }
-  function save() { localStorage.setItem(STORAGE, JSON.stringify(earned)); render(); }
-  function esc(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
-  function refLinks(ids) { return (ids || ['S1']).map(id => `<a href="#${id}">[${id}]</a>`).join(' '); }
-  function story(t) { return t.kind === 'story'; }
-  function visible(t) { return !(spoilerFree && story(t) && !earned[t.id]); }
-  function gradeName(grade) { return String(grade).toUpperCase(); }
-  function render() {
-    const count = Object.keys(earned).filter(id => earned[id]).length;
-    document.querySelector('#earned-count').innerHTML = `${count}<span> / 55</span>`;
-    document.querySelector('#progress-fill').style.width = `${count / 55 * 100}%`;
-    document.querySelector('#progress-label').textContent = `${Math.round(count / 55 * 100)}% complete`;
-    const query = document.querySelector('#search').value.trim().toLowerCase();
-    const filtered = trophies.filter(t => visible(t) && (filter === 'all' || (filter === 'missable' ? t.missable : t.kind === filter)) && (!query || `${t.name} ${t.description} ${t.guide}`.toLowerCase().includes(query)));
-    document.querySelector('#trophy-list').innerHTML = filtered.map(t => `<button class="trophy-row ${selected === t.id ? 'selected' : ''} ${earned[t.id] ? 'is-earned' : ''}" data-id="${t.id}"><span class="check ${earned[t.id] ? 'checked' : ''}">${earned[t.id] ? '✓' : ''}</span><span class="trophy-name">${esc(spoilerFree && story(t) && !earned[t.id] ? 'Story trophy hidden' : t.name)}<small>${esc(t.phase)}</small></span><span class="grade grade-${esc(t.grade)}">${esc(gradeName(t.grade))}</span></button>`).join('') || '<p class="no-results">No trophies match this view.</p>';
-    renderDetail(); renderRoadmap();
+const $ = (id) => document.getElementById(id);
+const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+function save() { localStorage.setItem(KEY, JSON.stringify([...earned])); }
+function visible(t) {
+  if (!spoilers && t.hidden && !earned.has(t.name)) return false;
+  if (filter === 'Missable' && !t.missable) return false;
+  if (filter !== 'All' && filter !== 'Missable' && t.kind !== filter) return false;
+  const haystack = `${t.name} ${t.description} ${t.guide}`.toLowerCase();
+  return !query || haystack.includes(query.toLowerCase());
+}
+function counts() {
+  const n = earned.size;
+  $('earned-label').textContent = `${n} / 55`;
+  $('percent').textContent = `${Math.round(n / 55 * 100)}%`;
+  $('remaining').textContent = `${55 - n} to go`;
+  $('progress-fill').style.width = `${n / 55 * 100}%`;
+  const next = trophies.find((t) => !earned.has(t.name));
+  $('next-title').textContent = next ? next.name : 'The state is yours';
+  $('next-up').dataset.id = next?.id || '';
+}
+function renderRows() {
+  const rows = $('rows');
+  rows.replaceChildren();
+  const sort = $('sort').value;
+  let list = trophies.filter(visible);
+  if (sort === 'grade') list = [...list].sort((a, b) => ['platinum','gold','silver','bronze'].indexOf(a.grade) - ['platinum','gold','silver','bronze'].indexOf(b.grade) || a.id - b.id);
+  if (sort === 'phase') list = [...list].sort((a, b) => phases.indexOf(a.phase) - phases.indexOf(b.phase) || a.id - b.id);
+  $('visible-count').textContent = `${list.length}`;
+  $('empty').hidden = list.length !== 0;
+  for (const t of list) {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = `trophy-row${selected === t.id ? ' selected' : ''}${earned.has(t.name) ? ' is-earned' : ''}`;
+    row.innerHTML = `<span class="check ${earned.has(t.name) ? 'checked' : ''}">${earned.has(t.name) ? '✓' : ''}</span><span class="row-copy"><b>${esc(t.name)}</b><small>${esc(t.description)}</small></span><span class="grade ${esc(t.grade)}">${esc(t.grade)}</span>`;
+    row.addEventListener('click', () => { selected = t.id; renderRows(); renderDetail(); });
+    row.querySelector('.check').addEventListener('click', (event) => { event.stopPropagation(); earned.has(t.name) ? earned.delete(t.name) : earned.add(t.name); save(); render(); });
+    rows.append(row);
   }
-  function renderDetail() {
-    const t = trophies.find(item => item.id === selected && visible(item));
-    const box = document.querySelector('#detail');
-    if (!t) { box.innerHTML = '<div class="empty-state"><span class="compass">✳</span><p class="eyebrow">FIELD NOTES</p><h3>Choose a trophy</h3><p>See its official description, a practical next step, missable status and source notes.</p></div>'; return; }
-    box.innerHTML = `<div class="detail-top"><span class="grade grade-${esc(t.grade)}">${esc(gradeName(t.grade))}</span><span class="detail-kind">${esc(t.kind)} · ${esc(t.phase)}</span></div><h3>${esc(t.name)}</h3><p class="official-label">OFFICIAL DESCRIPTION</p><blockquote>${esc(t.description)}</blockquote><div class="note-block"><h4>Guide</h4><p>${esc(t.guide)} ${refLinks(t.sources)}</p></div><div class="note-grid"><div><h4>Missable?</h4><p>${t.missable ? 'Potentially. Finish this before leaving its available story window; confirm the latest route before advancing.' : 'No specific one-time window is established by the cited list or guide.'}</p></div><div><h4>Roadmap step</h4><p>${esc(t.step)}</p></div></div><button class="mark-button" data-mark="${t.id}">${earned[t.id] ? '✓ Earned — undo' : 'Mark earned'}</button><p class="detail-sources">Sources ${refLinks(t.sources)} · Guide accessed 20 Nov 2026</p>`;
-  }
-  function renderRoadmap() {
-    const host = document.querySelector('#roadmap-phases');
-    host.innerHTML = PHASES.map((phase, index) => {
-      const members = trophies.filter(t => t.phase === phase);
-      const done = members.filter(t => earned[t.id]).length;
-      return `<article class="phase-card"><div class="phase-number">0${index + 1}</div><p class="eyebrow">PHASE ${index + 1} · ${done}/${members.length} EARNED</p><h3>${esc(phase)}</h3><p>${['Complete the chapter and named missions as they unlock. Pause at the end of each chapter to check open opportunities.','Mix repeatable activities with character strands; let the checklist keep the larger counts visible.','Work through map-wide sets and locations in small, trackable batches.','Return to remaining one-off actions and raise overall completion toward the final milestone.'][index]}</p><div class="phase-trophies">${members.map(t => `<span>${earned[t.id] ? '✓' : '○'} ${esc(t.name)}</span>`).join('')}</div></article>`;
-    }).join('');
-  }
-  async function init() {
-    const response = await fetch('data/trophies.json');
-    trophies = (await response.json()).trophies;
-    document.querySelector('#source-list').innerHTML = SOURCES.map(s => `<li id="${s.id}"><b>[${s.id}]</b> <a href="${s.url}" target="_blank" rel="noreferrer">${esc(s.name)}</a> <span>Retrieved 20 Nov 2026</span></li>`).join('');
-    document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === button)); document.querySelectorAll('.view').forEach(v => v.classList.toggle('hidden', v.id !== `view-${button.dataset.view}`)); }));
-    document.querySelectorAll('.filter').forEach(button => button.addEventListener('click', () => { filter = button.dataset.filter; document.querySelectorAll('.filter').forEach(b => b.classList.toggle('active', b === button)); render(); }));
-    document.querySelector('#search').addEventListener('input', render);
-    document.querySelector('#trophy-list').addEventListener('click', event => { const row = event.target.closest('[data-id]'); if (!row) return; selected = row.dataset.id; render(); });
-    document.querySelector('#detail').addEventListener('click', event => { const button = event.target.closest('[data-mark]'); if (!button) return; earned[button.dataset.mark] = !earned[button.dataset.mark]; save(); });
-    document.querySelector('#spoiler-toggle').addEventListener('click', event => { spoilerFree = !spoilerFree; event.currentTarget.setAttribute('aria-pressed', String(spoilerFree)); event.currentTarget.classList.toggle('on', spoilerFree); render(); });
-    document.querySelector('#export-button').addEventListener('click', () => { const blob = new Blob([JSON.stringify({ schema: 'leonida-ledger/v1', earned }, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'leonida-ledger-progress.json'; a.click(); URL.revokeObjectURL(a.href); });
-    document.querySelector('#import-button').addEventListener('click', () => document.querySelector('#import-file').click());
-    document.querySelector('#import-file').addEventListener('change', async event => { const file = event.target.files[0]; if (!file) return; try { const data = JSON.parse(await file.text()); const next = data.earned || data; earned = Object.fromEntries(Object.entries(next).filter(([id, value]) => trophies.some(t => String(t.id) === id) && value === true)); save(); } catch { alert('That progress file could not be read.'); } event.target.value = ''; });
-    document.addEventListener('keydown', event => { if (event.key === '/' && !/input|textarea/i.test(document.activeElement.tagName)) { event.preventDefault(); document.querySelector('#search').focus(); } });
-    render();
-    const shot = new URLSearchParams(location.search).get('shot');
-    if (shot === 'roadmap') document.querySelector('[data-view="roadmap"]').click();
-    if (shot === 'about') document.querySelector('[data-view="about"]').click();
-    if (shot === 'spoiler') { spoilerFree = true; document.querySelector('#spoiler-toggle').setAttribute('aria-pressed', 'true'); render(); }
-  }
-  init().catch(error => { document.querySelector('#trophy-list').textContent = `Could not load the local trophy data: ${error.message}`; });
-})();
+}
+function renderDetail() {
+  const t = trophies.find((item) => item.id === selected) || trophies[0];
+  const refs = t.sources.map((id) => sourceById[id]).filter(Boolean);
+  $('detail').innerHTML = `<div class="detail-top"><span class="eyebrow">FIELD NOTE ${String(t.id).padStart(2,'0')} / 55</span><span class="grade ${esc(t.grade)}">${esc(t.grade)}</span></div><h3>${esc(t.name)}</h3><p class="official-desc">“${esc(t.description)}”</p><div class="detail-rule"></div><section class="detail-section"><p class="eyebrow">HOW TO EARN</p><p>${esc(t.guide)}</p></section><div class="detail-split"><section class="detail-section"><p class="eyebrow">MISSABLE?</p><p class="missable-answer ${t.missable ? 'warn' : ''}">${t.missable ? 'Potentially — see the Chapter 1 save note.' : 'No known missable flag.'}</p></section><section class="detail-section"><p class="eyebrow">ROADMAP STEP</p><p>${esc(t.phase)}</p></section></div><section class="detail-section cited"><p class="eyebrow">SOURCES</p><ol>${refs.map((s) => `<li><span>[${esc(s.id)}]</span> ${esc(s.title)} <small>Retrieved ${esc(s.retrieved)}</small></li>`).join('')}</ol></section><button class="earned-button ${earned.has(t.name) ? 'done' : ''}" id="mark-earned" type="button">${earned.has(t.name) ? '✓  Marked earned' : '＋  Mark earned'}</button>`;
+  $('mark-earned').addEventListener('click', () => { earned.has(t.name) ? earned.delete(t.name) : earned.add(t.name); save(); render(); });
+}
+function renderPhases() {
+  $('phases').innerHTML = phases.map((phase, index) => {
+    const items = trophies.filter((t) => t.phase === phase);
+    const done = items.filter((t) => earned.has(t.name)).length;
+    return `<article class="phase-card"><div class="phase-number">0${index + 1}</div><div class="phase-content"><div class="phase-head"><div><p class="eyebrow">PHASE 0${index + 1}</p><h3>${esc(phase)}</h3></div><span>${done}<i> / ${items.length}</i></span></div><p>${phase === 'Story' ? 'Follow the main chapters, and protect the early meditation opportunity.' : phase === 'Side & activities' ? 'Close character strands and build counts through races, ranges, challenges and crimes.' : phase === 'Collectibles' ? 'Use the in-game collection counters to sweep the map without losing your place.' : 'Finish remaining requirements and verify every counter before the platinum.'}</p><div class="phase-track"><span style="width:${items.length ? done/items.length*100 : 0}%"></span></div><div class="phase-trophies">${items.slice(0, 5).map((t) => `<button type="button" data-id="${t.id}" class="phase-chip ${earned.has(t.name) ? 'done' : ''}">${esc(t.name)}</button>`).join('')}${items.length > 5 ? `<span class="more">+${items.length - 5} more</span>` : ''}</div></div></article>`;
+  }).join('');
+  $('phases').querySelectorAll('[data-id]').forEach((button) => button.addEventListener('click', () => { selected = Number(button.dataset.id); setTab('tracker'); render(); }));
+}
+function renderSources() {
+  $('sources').innerHTML = data.sources.map((s) => `<li><b>[${esc(s.id)}] ${esc(s.title)}</b><small>${esc(s.use)} Retrieved ${esc(s.retrieved)}.</small>${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noreferrer">Open source ↗</a>` : '<small>Competition starter data.</small>'}</li>`).join('');
+}
+function render() { counts(); renderRows(); renderDetail(); renderPhases(); $('spoiler-toggle').setAttribute('aria-pressed', String(spoilers)); $('spoiler-toggle').querySelector('span').textContent = spoilers ? 'Spoilers shown' : 'Spoilers hidden'; }
+function setTab(name) {
+  document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === `${name}-view`));
+}
+document.querySelectorAll('.tab').forEach((button) => button.addEventListener('click', () => setTab(button.dataset.tab)));
+document.querySelectorAll('.filter').forEach((button) => button.addEventListener('click', () => { filter = button.dataset.filter; document.querySelectorAll('.filter').forEach((b) => b.classList.toggle('active', b === button)); renderRows(); }));
+$('search').addEventListener('input', (event) => { query = event.target.value.trim(); renderRows(); });
+$('sort').addEventListener('change', renderRows);
+$('spoiler-toggle').addEventListener('click', () => { spoilers = !spoilers; render(); });
+$('next-up').addEventListener('click', () => { const t = trophies.find((item) => item.name === $('next-title').textContent); if (t) selected = t.id; setTab('tracker'); render(); });
+$('open-missable').addEventListener('click', () => { filter = 'Missable'; document.querySelectorAll('.filter').forEach((b) => b.classList.toggle('active', b.dataset.filter === 'Missable')); setTab('tracker'); renderRows(); });
+$('export').addEventListener('click', () => { const blob = new Blob([JSON.stringify({ format: 'leonida-ledger-v1', earned: [...earned] }, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'leonida-ledger-save.json'; link.click(); URL.revokeObjectURL(link.href); });
+$('import').addEventListener('change', async (event) => { const file = event.target.files?.[0]; if (!file) return; try { const parsed = JSON.parse(await file.text()); const names = Array.isArray(parsed) ? parsed : parsed.earned; if (!Array.isArray(names)) throw new Error('Save file has no earned list'); earned = new Set(names.filter((name) => trophies.some((t) => t.name === name))); save(); render(); } catch { alert('That save file could not be read. Choose a Leonida Ledger JSON export.'); } event.target.value = ''; });
+renderSources();
+const shot = new URLSearchParams(location.search).get('shot');
+if (shot === 'roadmap') setTab('roadmap');
+if (shot === 'spoiler') { spoilers = true; selected = 4; }
+if (shot === 'checklist') selected = 14;
+render();
